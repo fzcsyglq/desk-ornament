@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+
+def show(window):
+    photo_frame = tk.Frame(window, width=400, height=240)
+    photo_frame.pack(side=tk.RIGHT)
+    

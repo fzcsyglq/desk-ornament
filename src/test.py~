@@ -1,0 +1,142 @@
+#!/usr/bin/python3
+import tkinter as tk
+from PIL import Image, ImageTk
+import requests
+import json
+
+# 创建主窗口
+window = tk.Tk()
+window.title("可控屏幕应用")
+window.geometry("800x480")  # 设置屏幕分辨率
+
+# 创建天气显示区域
+weather_frame = tk.Frame(window, width=400, height=240)
+weather_frame.pack(side=tk.LEFT)
+
+# 创建相册显示区域
+photo_frame = tk.Frame(window, width=400, height=240)
+photo_frame.pack(side=tk.RIGHT)
+
+# 获取天气数据
+def get_weather():
+    # 这里使用了一个示例的天气API，你可以根据实际情况替换成你自己的API
+    url = "https://api.weatherapi.com/v1/current.json?key=YOUR_API_KEY&q=YOUR_LOCATION"
+    response = requests.get(url)
+    data = json.loads(response.text)
+    weather = data["current"]["condition"]["text"]
+    temperature = data["current"]["temp_c"]
+    return f"天气: {weather}\n温度: {temperature}°C"
+
+# 显示天气
+def show_weather():
+    weather_label = tk.Label(weather_frame, text=get_weather(), font=("Arial", 24))
+    weather_label.pack()
+
+# 显示相册
+def show_photos():
+    # 这里假设你的相册图片都存放在一个文件夹中，你可以根据实际情况进行修改
+    photos = ["photos/photo1.jpeg", "photos/photo2.jpeg", "photos/photo3.jpeg"]
+    current_photo = 0
+
+    def next_photo():
+        nonlocal current_photo
+        current_photo = (current_photo + 1) % len(photos)        
+        image = Image.open(photos[current_photo])
+        image = image.resize((400, 240))
+        photo = ImageTk.PhotoImage(image)
+        photo_label.configure(image=photo)
+        photo_label.image = photo
+
+    image = Image.open(photos[current_photo])
+    image = image.resize((400, 240))
+    photo = ImageTk.PhotoImage(image)
+    photo_label = tk.Label(photo_frame, image=photo)
+    photo_label.pack()
+
+    next_button = tk.Button(photo_frame, text="下一张", command=next_photo)
+    next_button.pack()
+
+# 切换功能
+def switch_function(event):
+    if event.delta > 0:
+        show_weather()
+    else:
+        show_photos()
+
+# 绑定滑动事件
+window.bind("<MouseWheel>", switch_function)
+
+# 默认显示天气
+#show_weather()
+show_photos()
+
+# 运行主窗口
+window.mainloop()
+
+
+import os
+import glob
+import tkinter as tk
+from PIL import Image, ImageTk
+
+class ImageSlideshow(tk.Tk):
+    def __init__(self, image_folder, slideshow_interval):
+        tk.Tk.__init__(self)
+        self.title("Image Slideshow")
+        self.geometry("800x600")
+
+        self.image_folder = image_folder
+        self.slideshow_interval = slideshow_interval
+
+        self.images = self.get_images()
+        self.current_image_index = 0
+
+        self.label = tk.Label(self)
+        self.label.pack()
+
+        self.bind("<Button-1>", self.next_image)
+        self.after(0, self.show_image)
+
+    def get_images(self):
+        image_files = glob.glob(os.path.join(self.image_folder, "*.jpg"))  # 修改为你想要的图片格式
+        images = []
+        for image_file in image_files:
+            image = Image.open(image_file)
+            image = image.resize((800, 600))  # 修改为你想要的图片尺寸
+            images.append(image)
+        return images
+
+    def show_image(self):
+        image = self.images[self.current_image_index]
+        photo = ImageTk.PhotoImage(image)
+        self.label.config(image=photo)
+        self.label.image = photo
+
+        self.current_image_index = (self.current_image_index + 1) % len(self.images)
+        self.after(self.slideshow_interval * 1000, self.show_image)
+
+    def next_image(self, event):
+        self.current_image_index = (self.current_image_index + 1) % len(self.images)
+
+if __name__ == "__main__":
+    image_folder = "path/to/your/folder"  # 修改为你的图片文件夹路径
+    slideshow_interval = 5  # 修改为切换图片的时间间隔（单位：秒）
+
+    app = ImageSlideshow(image_folder, slideshow_interval)
+    app.mainloop()
+
+
+import tkinter as tk
+
+def close_window():
+    root.destroy()
+
+root = tk.Tk()
+root.overrideredirect(True)
+root.wm_attributes("-transparentcolor", "white")  # 将窗口的背景颜色设置为白色（可以根据实际情况修改）
+
+# 自定义关闭按钮
+close_button = tk.Button(root, text="×", font=("Arial", 12), bg="red", fg="white", bd=0, command=close_window)
+close_button.pack(side="top", anchor="ne")
+
+root.mainloop()
