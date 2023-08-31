@@ -8,7 +8,6 @@ import logging
 import sys
 import os
 import getopt
-import geocoder
 import socket
 from datetime import datetime, timedelta
 from pynput.keyboard import Key
@@ -91,14 +90,14 @@ except getopt.GetoptError:
     raise ValueError("Missing one or more parameters.")
 
 
-ip_response = requests.get('http://api.ip.sb/ip')
+ip_response = requests.get('http://ipinfo.io/ip')
 ip_address = ip_response.text[:-1]
 pos_key = "mpYocW9qaHZSwNq3rkUPJwDPIkAWSTLJh5xaIqfU9CsprMdFOxlsIGgDx5ELiWjz"
 pos_url = f'https://api.ipplus360.com/ip/geo/v1/city/?key={pos_key}&ip={ip_address}&coordsys=WGS84&area=multi'
 pos_response = requests.get(pos_url) 
 #print(pos_response.json()['data']['lat'], pos_response.json()['data']['lng'])
 try:
-    with open('settings.json', 'r') as settings_json:
+    with open('settings_320_240.json', 'r') as settings_json:
         settings = json.loads(settings_json.read())
         if not api_key:
             api_key_setting = settings.get('ApiKey')

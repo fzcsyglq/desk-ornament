@@ -11,7 +11,7 @@ class window(tk.Tk):
         self.geometry("800x480")
         self.frames = [
             photo.Frame(self, width = 400, height = 240),
-            clock.Frame(self, width = 400, height = 240)
+            #clock.Frame(self, width = 400, height = 240)
         ]        
         
         self.bind("<Button-1>", self.before_switch)
